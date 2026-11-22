@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AccountPro — VEXORA Generator</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#090b10;color:#eee;font-family:Arial,sans-serif}
+.sidebar{width:220px;position:fixed;inset:0 auto 0 0;background:#11141c;padding:25px 17px;border-right:1px solid #292d38}
+.logo{font-size:23px;font-weight:900;color:#ff2638}.logo span{color:white}
+.nav{margin-top:45px;color:#999;line-height:3.5}.nav div{padding:5px 12px;border-radius:7px}
+.nav .active{background:#29202a;color:white}
+.main{margin-left:220px;padding:30px;max-width:1200px}
+h1{margin:0 0 8px;font-size:27px}.sub{color:#9298a7;font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin:25px 0}
+.stat,.panel{background:#151923;border:1px solid #292e3a;border-radius:12px;padding:20px}
+.stat small{color:#999}.stat strong{display:block;font-size:27px;margin-top:12px}
+.panel{margin-bottom:20px}
+select,input{background:#0e121b;border:1px solid #333b49;color:white;padding:13px;border-radius:7px;width:100%;margin:8px 0}
+button{border:0;background:#e50924;color:white;padding:13px 19px;border-radius:7px;font-weight:bold;cursor:pointer;margin:6px 4px 6px 0}
+button:hover{background:#bd061c}.secondary{background:#303644}
+.accounts{display:grid;grid-template-columns:repeat(2,1fr);gap:13px;margin-top:18px}
+.account{background:#0e121b;border:1px solid #303744;border-radius:10px;padding:16px;overflow-wrap:anywhere}
+.account h3{margin:0 0 15px;color:#ff5262}.account p{font-size:13px;color:#c2c7d2;line-height:1.8;white-space:pre-line}
+.status{color:#42db91;font-weight:bold}.history{font-size:13px;color:#aaa;line-height:2;white-space:pre-line}
+.notice{font-size:12px;color:#9ba3b4;line-height:1.5}
+@media(max-width:700px){.sidebar{position:relative;width:100%;height:auto}.nav{display:flex;gap:10px;margin-top:15px;flex-wrap:wrap}.main{margin:0;padding:16px}.stats{grid-template-columns:1fr}.accounts{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+ <div class="logo">VEXORA ACCOUNT<span>PRO</span></div>
+ <div class="nav"><div class="active">▣ Dashboard</div><div>◈ Generator</div><div>▤ History</div></div>
+ <p class="sub"></p>
+</aside>
+<main class="main">
+ <h1>Dashboard</h1><div class="sub">Multi-platform sample account generator</div>
+ <section class="stats">
+  <div class="stat"><small>GENERATED SAMPLES</small><strong id="total">0</strong></div>
+  <div class="stat"><small>PLATFORMS</small><strong>7</strong></div>
+  <div class="stat"><small>GENERATOR STATUS</small><strong style="color:#42db91">ONLINE</strong></div>
+ </section>
+ <section class="panel">
+  <h3>⚡ Account Generator</h3>
+  <label class="sub" for="platform">Select platform</label>
+  <select id="platform"><option>Netflix</option><option>Spotify</option><option>Disney+</option><option>HBO Max</option><option>YouTube Premium</option><option>Amazon Prime</option><option>Crunchyroll</option></select>
+  <label class="sub" for="amount">Number of samples</label>
+  <input id="amount" type="number" min="1" max="50" value="5">
+  <button onclick="generate()">GENERATE</button><button class="secondary" onclick="copyAll()">COPY ALL</button><button class="secondary" onclick="clearResults()">CLEAR</button>
+  <p class="notice"></p>
+ </section>
+ <section class="panel"><h3>Generated Results</h3><div class="sub" id="counter">Waiting for generation...</div><div class="accounts" id="results"></div></section>
+ <section class="panel"><h3>Generation History</h3><div class="history" id="history"></div></section>
+</main>
+<script>
+const people=[
+ ["andrei","popescu"],["maria","ionescu"],["mihai","stan"],["ioana","dumitru"],
+ ["alexandru","vasile"],["sofia","marin"],["david","georgescu"],["bianca","radu"],
+ ["rares","stoica"],["elena","tudor"],["gabriel","petrescu"],["daria","dobre"],
+ ["olivia","martin"],["liam","johnson"],["emma","wilson"],["noah","brown"],
+ ["lucas","miller"],["amelia","davis"],["leo","garcia"],["isabella","rodriguez"],
+ ["ethan","smith"],["mia","anderson"],["lucas","dubois"],["chloe","bernard"],
+ ["matteo","rossi"],["giulia","romano"],["luca","bianchi"],["sofia","moretti"],
+ ["hugo","santos"],["ines","ferreira"],["diego","lopez"],["lucia","martinez"],
+ ["jakub","nowak"],["zofia","kowalska"],["oliver","svoboda"],["anna","mueller"]
+];
+let generated=[],total=0,history=[];
+function random(arr){return arr[Math.floor(Math.random()*arr.length)]}
+function makeEmail(){
+ const [first,last]=random(people);
+ const separator=Math.random()<.7?".":"";
+ const suffix=Math.floor(10+Math.random()*990);
+ return first+separator+last+suffix+"@example.com";
+}
+function makePassword(){const chars="abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789!@#";let p="";for(let i=0;i<14;i++)p+=chars[Math.floor(Math.random()*chars.length)];return p}
+function generate(){
+ const app=document.getElementById("platform").value;
+ const amount=Math.max(1,Math.min(50,Number(document.getElementById("amount").value)||5));
+ const results=document.getElementById("results");results.innerHTML="";generated=[];
+ for(let i=0;i<amount;i++){
+  const item={app,email:makeEmail(),password:makePassword()};generated.push(item);
+  const card=document.createElement("div");card.className="account";
+  const heading=document.createElement("h3");heading.textContent=app+" #"+(i+1);
+  const details=document.createElement("p");details.textContent="EMAIL: "+item.email+"\nPASSWORD: "+item.password+"";
+  const status=document.createElement("div");status.className="status";status.textContent="";
+  const copy=document.createElement("button");copy.className="secondary";copy.textContent="COPY SAMPLE";
+  copy.onclick=()=>copyText("Platform: "+item.app+"\nEmail: "+item.email+"\nPassword: "+item.password+"\nStatus: ");
+  card.append(heading,details,status,copy);results.appendChild(card);
+ }
+ total+=amount;document.getElementById("total").textContent=total;
+ document.getElementById("counter").textContent=amount+" sample records generated";
+ history.unshift(new Date().toLocaleTimeString()+" — "+app+" — "+amount+" samples");
+ document.getElementById("history").textContent=history.slice(0,8).join("\n");
+}
+function copyText(text){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).catch(()=>window.prompt("Copy this text:",text))}else{window.prompt("Copy this text:",text)}}
+function copyAll(){if(!generated.length){alert("Generate samples first!");return}copyText(generated.map((x,i)=>"SAMPLE #"+(i+1)+"\nPlatform: "+x.app+"\nEmail: "+x.email+"\nPassword: "+x.password+"\nStatus: ").join("\n\n"))}
+function clearResults(){generated=[];document.getElementById("results").innerHTML="";document.getElementById("counter").textContent="Waiting for generation..."}
+</script>
+</body>
+</html>
